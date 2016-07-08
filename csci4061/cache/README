@@ -1,0 +1,31 @@
+/*
+*CSci4061 S2016 Assignment 4
+*Group AN
+*Name: Peter Nguyen, Yuanhao Lu, Phoebe Zhang, Rain Zhang
+*X500: nguy1435,     luxx0267,   zhan2937,     zhan2223
+*Date: 05/02/2016
+*/
+
+How to Compile:
+To compile, simplily change to the source file directory and type in
+	make
+To run the program, type following parameters in the command line window:
+	./web_server [port] [web_dir] [num_dispatch] [num_worker] [queue_len] [cache_size]
+
+	port: any number but 9000 from 1024 to 65536
+	web_dir: path to the directory of the web folder
+	num_dispatch: number of dispatch threads, max is 100
+	num_worker: number of worker threads, max is 100
+	queue_len: length of request queue, max is 100
+	cache_size: size of the cache, max is 100
+
+How the program works:
+The program will create and join specified number of dispatcher and worker threads, and
+each of those threads will keep running for incoming requests. 
+Dispatcher will mutex lock the buffer, push request to the queue (but wait while the
+queue is not empty), and then signal that the buffer is not empty. 
+And the worker thread, at the same time, will grab a request from queue (wait if empty),
+and go to the the cache first to find if there is a cache hit. If yes then directly
+return the stored content and update the time the cache entry was accessed. If no, then we will access the disk first, 
+return the result and then also put the result into cache. The replacement policy we elected was to replace
+the entry with the earliest access time with the new request.
